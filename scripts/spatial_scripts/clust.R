@@ -41,13 +41,13 @@ assay_to_use <- "RNA" # use "RNA" counts/normalized for expression-based FC
 min_spots <- 5 # minimum cluster size to consider
 n_top_terms <- 20 # for later reporting
 
-# 1) average expression per cluster (log-scale / data slot)
+# 1) average expression per cluster 
 avg_expr <- AverageExpression(sample, assays = assay_to_use, slot = "data", group.by = cluster_col)
 avg_mat <- avg_expr[[assay_to_use]] # genes x clusters
 
 clusters <- colnames(avg_mat)
 
-# 2) compute fold-change vector for each cluster: cluster vs other clusters (difference of means)
+# 2) compute fold-change vector for each cluster: cluster vs other clusters 
 avg_dense <- as.matrix(avg_mat)
 fold_changes <- list()
 
@@ -69,21 +69,21 @@ for (cl in clusters) {
     fold_changes[[cl]] <- fc_vec
 }
 
-# 3) optional: remove tiny clusters from interpretation
+# 3)  removing tiny clusters from interpretation
 cluster_sizes <- table(sample[[cluster_col]])
 keep_clusters <- colnames(avg_mat)  # ignore size filter completely
 
-# 4) prepare gene sets (example: Hallmark)
+# 4) prepare gene sets 
 msig <- msigdbr(species = "Homo sapiens", category = "H") # change species if needed
 pathways <- split(msig$gene_symbol, msig$gs_name)
 
-# 5) run fgsea for each kept cluster using ranked vector (descending)
+# 5) running fgsea for each  cluster using ranked vector (descending)
 fgsea_results <- list()
 
 for (cl in keep_clusters) {
     message("Running fgsea for cluster: ", cl)
     
-    # Safely extract the pre-computed fold-change vector
+    #  extract the pre-computed fold-change vector
     fc_vec <- fold_changes[[cl]]
     
     if (is.null(fc_vec) || length(fc_vec) == 0) {
@@ -91,7 +91,7 @@ for (cl in keep_clusters) {
         next
     }
     
-    # Ensure it's a named numeric vector
+   
     if (!is.numeric(fc_vec)) fc_vec <- as.numeric(fc_vec)
     
     # Crucial: keep the original gene names!
@@ -120,7 +120,7 @@ for (cl in keep_clusters) {
     fgsea_results[[cl]] <- fg %>% arrange(padj)
 }
 
-# Now this will work perfectly
+
 fgsea_results[["g6"]][1:n_top_terms, c("pathway", "padj", "NES", "leadingEdge")]
 
 
@@ -129,10 +129,10 @@ fgsea_results[["g6"]][1:n_top_terms, c("pathway", "padj", "NES", "leadingEdge")]
 #
 library(ggplot2)
 library(dplyr)
-library(tidyr)  # for pivot_longer if needed
+library(tidyr)  
 
-# 1. Extract top N pathways per cluster (you can change this number)
-top_n <- 6   # top 8 enriched pathways per cluster (adjust as you like)
+# Extract top 6 pathways per cluster 
+top_n <- 6   
 
 top_pathways <- lapply(names(fgsea_results), function(cl) {
     df <- fgsea_results[[cl]]
@@ -141,23 +141,23 @@ top_pathways <- lapply(names(fgsea_results), function(cl) {
                             arrange(padj) %>%
                             head(top_n) %>%
                             mutate(cluster = cl,
-                                   pathway = gsub("HALLMARK_", "", pathway),      # remove prefix for cleaner labels
+                                   pathway = gsub("HALLMARK_", "", pathway),     
                                    pathway = gsub("_", " ", pathway),
                                    pathway = stringr::str_to_title(pathway)) %>%
                             select(cluster, pathway, padj, NES)
 }) %>% bind_rows()
 
-# If nothing came out (should not happen now), stop
+
 if (nrow(top_pathways) == 0) stop("No significant pathways found – try increasing nperm or lowering padj cutoff")
 
-# 2. Order clusters nicely (g0, g1, g2, ...) and pathways by first appearance
+# Ordering clusters  (g0, g1, g2, ...) and pathways by first appearance
 top_pathways$cluster <- factor(top_pathways$cluster,
-                               levels = paste0("g", 0:20))  # works even if some are missing
+                               levels = paste0("g", 0:20))  
 
 top_pathways$pathway <- factor(top_pathways$pathway,
                                levels = rev(unique(top_pathways$pathway[order(top_pathways$cluster, top_pathways$padj)])))
 
-# 3. Create the dotplot
+#Create the dotplot
 p <- ggplot(top_pathways, aes(x = cluster, y = pathway)) +
     geom_point(aes(size = -log10(padj), color = NES)) +
     scale_color_gradient2(low = "blue", mid = "grey90", high = "red",
@@ -178,7 +178,7 @@ p <- ggplot(top_pathways, aes(x = cluster, y = pathway)) +
 print(p)
 
 
-# to validate our assumption we want to check the markers :
+# to validate our assumption we want to check the markers : / between 2 b cell clusters/
 library(dplyr)
 library(Seurat)
 library(ggplot2)
@@ -188,12 +188,12 @@ clust_b <- "5"
 Idents(sample) <- "TF_cluster"
 markers_A_vs_B <- FindMarkers(sample,
                               ident.1 = clust_a,
-                              ident.2 = clust_b,      # only against each other
+                              ident.2 = clust_b,      
                               assay = "RNA",
                               slot = "data",
                               test.use = "wilcox",
                               min.pct = 0.1,
-                              logfc.threshold = 0) %>%   # keep both up & down
+                              logfc.threshold = 0) %>%   
     rownames_to_column("gene") %>%
     arrange(p_val_adj) %>%
     mutate(cluster = paste0(clust_a, "_vs_", clust_b))

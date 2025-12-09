@@ -1,4 +1,4 @@
-# checking our hypothesis on tf activity 
+# checking our hypothesis on tf activity : we used speraman for non normal data
 tf_names <- c("IRF4(+)","ATF3(+)","FOSB(+)","MAFF(+)","NFE2L2(+)")
 
 tf_data <- sample@meta.data[,tf_names]

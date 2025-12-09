@@ -1,8 +1,10 @@
 keep <- c("pbmc","auc","auc_mat")
 rm(list = setdiff(ls(),keep))
+#loading data :
 library(Seurat)
 counts <- Read10X(data.dir = "~/practice/spatial/data/filtered_feature_bc_matrix")
 sample <- CreateSeuratObject(counts = counts)
+#adding image
 spatial_image <- Read10X_Image(image.dir = "~/practice/spatial/data/spatial")
 spatial_image <- subset(spatial_image, cells = colnames(sample))
 
