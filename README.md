@@ -1,5 +1,11 @@
 
-# PBMC‑Derived Regulons Reveal Stress‑Defined Niches in Human Lymph Node
+# PBMC‑Derived Regulons Reveal Stress‑Defined Niches in Human Lymph Node 
+### explore via 🔗[shiny app](https://yossohani.shinyapps.io/TF_LymphMap/)
+
+<img width="1906" height="707" alt="image" src="https://github.com/user-attachments/assets/380f1476-c934-441c-b3ca-a8984fcb9e30" />
+
+
+----
 
 > **description:**  
 > Integration of PBMC single‑cell RNA‑seq, pySCENIC regulon activity, and 10x Visium spatial transcriptomics to map activation and metabolic‑stress programs across immune niches in a human lymph node. plus a Shiny app for interactive exploration.
