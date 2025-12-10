@@ -75,23 +75,16 @@ To determine whether a minimal set of transcription‑factor regulons, inferred 
 
 ```text
 .
-├── data/
-│ ├── pbmc_seurat.rds # PBMC reference object (optional)
-│ ├── spatial_seurat.rds # Visium object with cell-type labels & regulons
-│ ├── tf_cor_matrix.rds # 5×5 TF correlation matrix
-│ ├── tf_cluster_stats.rds # mean TF scores & cell-type proportions per cluster
-│ ├── hallmark_fgsea.rds # fgsea Hallmark enrichment per TF_cluster
-│ └── spot_tf_axes.rds # per-spot AP1/Nrf2/IRF4 scores (optional)
 ├── scripts/
-│ ├── 01_pbmc_preprocessing.R
-│ ├── 02_pyscenic_pipeline.py
-│ ├── 03_label_transfer_spatial.R
-│ ├── 04_tf_clustering_and_markers.R
-│ └── 05_fgsea_and_figures.R
+│ ├── Spatial_scripts ├── spatial_base.R
+│                     ├── cor.R 
+|                     ├── clust.R
+   ├── Single_scripts ├── pyscenic
+                      ├── base.R
+                      ├── regulons.R
+│                     ├── transpose.py
+│ 
 ├── shiny_app/
-│ ├── app.R # Shiny app (or ui.R + server.R)
-│ └── www/ # static images, css
-├── results/
-│ ├── figures/ # static plots used in abstract/manuscript
-│ └── tables/ # exported marker/pathway tables
+│ ├── main_2.R.R # Shiny app ( ui.R + server.R)
+│ └── pics # static images, css
 └── README.md
